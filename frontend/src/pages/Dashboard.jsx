@@ -73,56 +73,7 @@ const Dashboard = () => {
             ))}
           </section>
 
-          {/* ─── Social Media Buttons Section ─────────────────────────── */}
-          <section
-            className={`p-6 rounded-2xl border shadow-sm flex flex-wrap justify-center gap-4 ${
-              darkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
-            }`}
-          >
-            <button
-              className={`flex items-center gap-2 px-5 py-2 rounded-lg font-semibold transition ${
-                darkMode
-                  ? "bg-gray-700 hover:bg-gray-600 text-white"
-                  : "bg-black text-white hover:bg-gray-800"
-              }`}
-            >
-              <Music size={18} /> Add TikTok
-            </button>
-
-              <MetaConnect />
-              <GoogleConnect/>
-            
-            <button
-              className={`flex items-center gap-2 px-5 py-2 rounded-lg font-semibold transition ${
-                darkMode
-                  ? "bg-pink-600 hover:bg-pink-700"
-                  : "bg-pink-500 hover:bg-pink-600 text-white"
-              }`}
-            >
-              <Instagram size={18} /> Add Instagram
-            </button>
-
-            <button
-              className={`flex items-center gap-2 px-5 py-2 rounded-lg font-semibold transition ${
-                darkMode
-                  ? "bg-blue-700 hover:bg-blue-800"
-                  : "bg-blue-600 hover:bg-blue-700 text-white"
-              }`}
-            >
-              <Linkedin size={18} /> Add LinkedIn
-            </button>
-
-            <button
-              className={`flex items-center gap-2 px-5 py-2 rounded-lg font-semibold transition ${
-                darkMode
-                  ? "bg-red-600 hover:bg-red-700"
-                  : "bg-red-500 hover:bg-red-600 text-white"
-              }`}
-            >
-              <Globe size={18} /> Add Google
-            </button>
-          </section>
-
+        
           {/* Charts Section */}
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Line Chart Placeholder */}
