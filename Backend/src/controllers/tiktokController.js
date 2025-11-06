@@ -52,7 +52,7 @@ export const tiktokCallback = async (req, res) => {
       { upsert: true }
     );
 
-    return res.redirect("http://localhost:5173/dashboard?connected=tiktok");
+    return res.redirect("http://localhost:5173/dashboard/connect-account");
 
   } catch (err) {
     console.log("TikTok OAuth Error:", err.message);

@@ -51,7 +51,7 @@ export const linkedInCallback = async (req, res) => {
       { upsert: true }
     );
 
-    return res.redirect("http://localhost:5173/dashboard?connected=linkedin");
+    return res.redirect("http://localhost:5173/dashboard/connect-account");
 
   } catch (err) {
     console.log("LinkedIn OAuth Error:", err.message);

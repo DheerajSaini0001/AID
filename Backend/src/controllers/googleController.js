@@ -53,7 +53,7 @@ export const googleCallback = async (req, res) => {
       { upsert: true }
     );
 
-    return res.redirect("http://localhost:5173/dashboard?connected=google");
+    return res.redirect("http://localhost:5173/dashboard/connect-account");
 
   } catch (error) {
     console.log("Google OAuth Callback Error:", error.message);
