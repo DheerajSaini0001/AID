@@ -39,12 +39,12 @@ const Dashboard = () => {
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto p-6 md:p-10 space-y-8">
           {/* KPI Cards */}
-          <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+          <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
             {[
               { icon: <Users size={22} />, title: "Total Leads", value: "1,245" },
-              { icon: <TrendingUp size={22} />, title: "Conversion Rate", value: "68%" },
-              { icon: <DollarSign size={22} />, title: "Revenue", value: "$84,230" },
-              { icon: <Target size={22} />, title: "ROI Score", value: "92" },
+              
+              { icon: <DollarSign size={22} />, title: "Spend", value: "$84,230" },
+              { icon: <Target size={22} />, title: "CPL", value:"$"+(84230 / 1245).toFixed(2)  },
             ].map((item, i) => (
               <div
                 key={i}

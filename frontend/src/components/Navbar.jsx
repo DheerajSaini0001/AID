@@ -79,9 +79,10 @@ const Navbar = ({ onToggleSidebar }) => {
             onClick={() => setShowMenu((prev) => !prev)}
             className="flex items-center gap-2 cursor-pointer"
           >
-            <CircleUserRound size={20} />
+            <CircleUserRound size={25} />
             <div className="hidden md:block">
-             
+             <p className="text-[12px]">Hi , {user}</p>
+      
             </div>
           </div>
 
@@ -94,6 +95,7 @@ const Navbar = ({ onToggleSidebar }) => {
                   : "bg-white border-gray-200 text-gray-900"
               }`}
             >
+             
               <button
                 onClick={logout}
                 className="flex items-center w-full px-4 py-2 text-sm hover:bg-indigo-50 dark:hover:bg-gray-700"
@@ -101,6 +103,7 @@ const Navbar = ({ onToggleSidebar }) => {
                 <LogOut size={16} className="mr-2" />
                 Logout
               </button>
+              
             </div>
           )}
         </div>}      {/* User Avatar + Dropdown */}
