@@ -58,19 +58,7 @@ const Navbar = ({ onToggleSidebar }) => {
       {/* Right Section */}
       <div className="flex items-center gap-5">
         {/* Notification Bell */}
-        <div className="relative">
-          <Bell
-            size={22}
-            className={`cursor-pointer ${
-              darkMode ? "hover:text-indigo-400" : "hover:text-indigo-600"
-            }`}
-          />
-          {notifCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
-              {notifCount}
-            </span>
-          )}
-        </div>
+     
 
         {/* Theme Toggle */}
         <button
