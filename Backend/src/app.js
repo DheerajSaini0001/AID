@@ -13,6 +13,7 @@ import insightsRoutes from "./routes/insightsRoutes.js";
 import accountsRoutes from "./routes/leadRoutes.js";
 import leadRoutes from "./routes/leadRoutes.js";
 import pixelRoutes from "./routes/pixelRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js"
 dotenv.config();
 
 const app = express();
@@ -27,6 +28,9 @@ app.use("/insights", insightsRoutes);
 app.use("/accounts", accountsRoutes);
 app.use("/lead", leadRoutes);
 app.use("/pixel", pixelRoutes);
+
+
+app.use("/dashboard", dashboardRoutes);
 
 
 

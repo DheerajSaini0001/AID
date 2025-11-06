@@ -54,7 +54,7 @@ export const metaCallback = async (req, res) => {
       { upsert: true }
     );
 
-    return res.redirect("http://localhost:5173/dashboard?connected=meta");
+    return res.redirect("http://localhost:5173/dashboard/connect-account");
 
   } catch (error) {
     console.log("Meta OAuth Error:", error.message);
