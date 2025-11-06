@@ -1,23 +1,46 @@
 import AdAccountToken from "../models/AdAccountToken.js";
 import AdInsights from "../models/AdInsights.js";
+import { apiRequestWithRefresh } from "../utils/apiRequestWithRefresh.js";
 
 export const fetchLinkedInInsights = async (dealerId) => {
   try {
     const tokenData = await AdAccountToken.findOne({ dealerId, platform: "linkedin" });
     if (!tokenData) return console.log("⚠️ No LinkedIn Token Found");
 
-    const accessToken = tokenData.accessToken;
     const adAccountId = tokenData.adAccountId;
+    if (!adAccountId) return console.log("⚠️ No LinkedIn Ad Account Connected");
 
-    const reportRes = await fetch(
-      `https://api.linkedin.com/rest/adAnalyticsV2?q=analytics&pivot=CAMPAIGN&dateRange.start.day=1&dateRange.start.month=1&dateRange.start.year=2024&dateRange.end.day=1&dateRange.end.month=1&dateRange.end.year=2024&accounts=urn:li:sponsoredAccount:${adAccountId}`,
-      { headers: { Authorization: `Bearer ${accessToken}` } }
-    );
+    const url = `https://api.linkedin.com/rest/adAnalyticsV2
+      ?q=analytics
+      &pivot=CAMPAIGN
+      &dateRange.start.day=1
+      &dateRange.start.month=1
+      &dateRange.start.year=2024
+      &dateRange.end.day=31
+      &dateRange.end.month=12
+      &dateRange.end.year=2024
+      &accounts=urn:li:sponsoredAccount:${adAccountId}`
+      .replace(/\s+/g, "");
 
-    const reportData = await reportRes.json();
+    // ✅ Wrap request inside auto-refresh handler
+    const reportData = await apiRequestWithRefresh("linkedin", dealerId, async (accessToken) => {
+      const res = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "LinkedIn-Version": "202402",
+        },
+      });
+      return await res.json();
+    });
 
-    for (const item of reportData.elements || []) {
-      const date = item.dateRange?.start?.year + "-" + item.dateRange?.start?.month + "-" + item.dateRange?.start?.day;
+    if (!reportData?.elements) return;
+
+    // ✅ Store Insights
+    for (const item of reportData.elements) {
+      const year = item.dateRange?.start?.year || 2024;
+      const month = item.dateRange?.start?.month || 1;
+      const day = item.dateRange?.start?.day || 1;
+      const date = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
       await AdInsights.findOneAndUpdate(
         { dealerId, platform: "linkedin", date },
@@ -30,7 +53,7 @@ export const fetchLinkedInInsights = async (dealerId) => {
       );
     }
 
-    console.log("✅ LinkedIn Ads Synced:", dealerId);
+    console.log(`✅ LinkedIn Insights Synced for Dealer: ${dealerId}`);
 
   } catch (err) {
     console.log("❌ LinkedIn Sync Error:", err.message);

@@ -1,60 +1,61 @@
 import AdAccountToken from "../models/AdAccountToken.js";
 import AdInsights from "../models/AdInsights.js";
+import { apiRequestWithRefresh } from "../utils/apiRequestWithRefresh.js";
 
 export const fetchGoogleInsights = async (dealerId) => {
   try {
-    const tokenData = await AdAccountToken.findOne({ dealerId, platform: "google" });
-    if (!tokenData) return console.log("⚠️ No Google Token Found");
-
-    const accessToken = tokenData.accessToken;
-
-    // STEP 1: Fetch Google Ad Accounts
-    const accRes = await fetch("https://googleads.googleapis.com/v14/customers:listAccessibleCustomers", {
-      headers: { Authorization: `Bearer ${accessToken}` }
+    // 1️⃣ Get Account List (auto refresh handled inside)
+    const accData = await apiRequestWithRefresh("google", dealerId, async (accessToken) => {
+      const res = await fetch(
+        "https://googleads.googleapis.com/v14/customers:listAccessibleCustomers",
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+      return await res.json();
     });
-    const accData = await accRes.json();
 
-    if (!accData.resourceNames || accData.resourceNames.length === 0) return;
+    if (!accData?.resourceNames?.length) return;
 
     const customerId = accData.resourceNames[0].replace("customers/", "");
 
-    // STEP 2: Fetch Spend Data (Yesterday)
+    // 2️⃣ Prepare Query
     const query = `
       SELECT metrics.cost_micros, metrics.clicks, metrics.impressions, segments.date
       FROM customer
       WHERE segments.date DURING YESTERDAY
     `;
 
-    const report = await fetch(
-      `https://googleads.googleapis.com/v14/customers/${customerId}/googleAds:search`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ query })
-      }
-    );
+    // 3️⃣ Fetch Reports (also auto refresh)
+    const reportData = await apiRequestWithRefresh("google", dealerId, async (accessToken) => {
+      const res = await fetch(
+        `https://googleads.googleapis.com/v14/customers/${customerId}/googleAds:search`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ query }),
+        }
+      );
+      return await res.json();
+    });
 
-    const reportData = await report.json();
-
+    // 4️⃣ Save to DB
     for (const row of reportData.results || []) {
-      const date = row.segments.date;
-      const spend = (row.metrics.cost_micros || 0) / 1_000_000;
-      const clicks = row.metrics.clicks || 0;
-      const impressions = row.metrics.impressions || 0;
-
       await AdInsights.findOneAndUpdate(
-        { dealerId, platform: "google", date },
-        { spend, clicks, impressions },
+        { dealerId, platform: "google", date: row.segments.date },
+        {
+          spend: (row.metrics.cost_micros || 0) / 1_000_000,
+          clicks: row.metrics.clicks || 0,
+          impressions: row.metrics.impressions || 0,
+        },
         { upsert: true }
       );
     }
 
-    console.log("✅ Google Ads Synced:", dealerId);
+    console.log(`✅ Google Insights Synced for Dealer: ${dealerId}`);
 
   } catch (err) {
-    console.log("❌ Google Ads Sync Error:", err.message);
+    console.log("❌ Google Sync Error:", err.message);
   }
 };

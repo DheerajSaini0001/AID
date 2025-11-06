@@ -42,7 +42,7 @@ export const getDashboardSummary = async (req, res) => {
     const roi = totalSpend > 0 ? (revenue / totalSpend) * 100 : 0;
 
     // Platform Breakdown
-    const platforms = ["meta", "google", "linkedin", "tiktok"];
+    const platforms = ["Facebook/Instagram", "Google Ads", "Linkedin", "Tiktok"];
     const platformBreakdown = platforms.map((platform) => {
       const platformData = records.filter((r) => r.platform === platform);
 
