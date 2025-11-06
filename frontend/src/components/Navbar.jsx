@@ -63,7 +63,7 @@ const Navbar = ({ onToggleSidebar }) => {
         </button>
 
         {/* User Avatar */}
-        {/* <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <img
             src="https://i.pravatar.cc/40?img=8"
             alt="Dealer Avatar"
@@ -73,7 +73,7 @@ const Navbar = ({ onToggleSidebar }) => {
             <p className="text-sm font-medium">Hi, {user} 👋</p>
             <p className="text-xs text-gray-500">Dealer</p>
           </div>
-        </div> */}
+        </div>
       </div>
     </nav>
   );
