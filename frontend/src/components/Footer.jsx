@@ -1,6 +1,7 @@
 import React from "react";
 import { Github, Linkedin, Mail, Heart } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const { darkMode } = useTheme();
@@ -13,6 +14,7 @@ const Footer = () => {
           : "bg-white border-gray-200 text-gray-600"
       }`}
     >
+      
       <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
         {/* Left Section */}
         <div className="text-center md:text-left">
@@ -26,34 +28,34 @@ const Footer = () => {
 
         {/* Center Section */}
         <div className="flex items-center gap-4 text-sm">
-          <a
-            href="#"
+          <Link
+            replace to="#"
             className={`hover:text-indigo-600 dark:hover:text-indigo-400 transition`}
           >
             Privacy Policy
-          </a>
+          </Link>
           <span className="text-gray-400">|</span>
-          <a
-            href="#"
+          <Link
+            replace to="#"
             className={`hover:text-indigo-600 dark:hover:text-indigo-400 transition`}
           >
             Terms of Service
-          </a>
+          </Link>
         </div>
 
         {/* Right Section - Socials */}
         <div className="flex items-center gap-4">
-          <a
-            href="mailto:contact@autolead.ai"
+          <Link
+            replace to="mailto:contact@autolead.ai"
             className="p-2 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-800 transition"
           >
             <Mail
               size={18}
               className={darkMode ? "text-gray-300" : "text-gray-700"}
             />
-          </a>
-          <a
-            href="https://github.com/"
+          </Link>
+          <Link
+            replace to="https://github.com/"
             target="_blank"
             rel="noreferrer"
             className="p-2 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-800 transition"
@@ -62,9 +64,9 @@ const Footer = () => {
               size={18}
               className={darkMode ? "text-gray-300" : "text-gray-700"}
             />
-          </a>
-          <a
-            href="https://linkedin.com/"
+          </Link>
+          <Link
+            replace to="https://linkedin.com/"
             target="_blank"
             rel="noreferrer"
             className="p-2 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-800 transition"
@@ -73,7 +75,7 @@ const Footer = () => {
               size={18}
               className={darkMode ? "text-gray-300" : "text-gray-700"}
             />
-          </a>
+          </Link>
         </div>
       </div>
 

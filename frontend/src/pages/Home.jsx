@@ -1,11 +1,12 @@
 import React from "react";
 import { ArrowRight, BarChart3, Sparkles, Sun, Moon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, Links } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { useData } from "../context/DataContext";
 
 const Home = () => {
   const { darkMode, toggleTheme } = useTheme();
-
+  const {user}=useData();
   return (
     <div
       className={`flex flex-col h-screen transition-all duration-500 ${
@@ -43,13 +44,21 @@ const Home = () => {
         </p>
 
         <div className="flex flex-wrap justify-center gap-4">
-          <Link
+        {!user? <Link
             to="/login"
             className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition"
           >
             Get Started Free
             <ArrowRight className="w-5 h-5" />
-          </Link>
+          </Link>:  <Link
+            to="dashboard/connect-account"
+            className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition"
+          >
+            Dashboard
+            <ArrowRight className="w-5 h-5" />
+          </Link>}
+         
+        
 
        
         </div>

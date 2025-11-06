@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { Navigate, replace, useNavigate } from "react-router-dom";
 
-// Create context
 const DataContext = createContext();
 export const useData = () => useContext(DataContext);
 
@@ -9,13 +9,10 @@ export const DataProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  // ✅ Change to your backend API
+const Navigate=useNavigate();
   const BASE_URL = "http://localhost:501/dealer";
 
-  // ---------------------------
   // ✅ LOGIN FUNCTION
-  // ---------------------------
   const login = async (email, password) => {
     setLoading(true);
     setError(null);
@@ -39,13 +36,12 @@ export const DataProvider = ({ children }) => {
         localStorage.setItem("token", data.token);
         setToken(data.token);
 
-        // ✅ Immediately fetch profile after login
         await fetchUserProfile(data.token);
       } else {
         throw new Error("Invalid login response from server");
       }
 
-      return true; // success
+      return true;
     } catch (err) {
       console.error("Login error:", err);
       setError(err.message);
@@ -55,14 +51,13 @@ export const DataProvider = ({ children }) => {
     }
   };
 
-  // ---------------------------
-  // ✅ FETCH USER PROFILE FUNCTION
-  // ---------------------------
+  // ✅ FETCH PROFILE
   const fetchUserProfile = async (authToken = token) => {
     if (!authToken) return;
 
     try {
       setLoading(true);
+
       const response = await fetch(`${BASE_URL}/profile`, {
         method: "GET",
         headers: {
@@ -77,7 +72,9 @@ export const DataProvider = ({ children }) => {
         throw new Error(data.message || "Failed to fetch profile");
       }
 
-      setUser(data.dealerName.toUpperCase()); // depends on backend naming
+      // Adjust based on backend response fields
+      setUser(data.dealerName?.toUpperCase() || data.name || "USER");
+
       localStorage.setItem("dealerId", data._id);
       localStorage.setItem("user", JSON.stringify(data.dealerName));
     } catch (err) {
@@ -88,28 +85,23 @@ export const DataProvider = ({ children }) => {
     }
   };
 
-  // ---------------------------
-  // ✅ LOGOUT FUNCTION
-  // ---------------------------
+  // ✅ LOGOUT
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("dealerId");
     setToken(null);
     setUser(null);
+    Navigate("/",{replace:true})
   };
 
-  // ---------------------------
-  // ✅ LOAD PROFILE ON APP START
-  // ---------------------------
+  // ✅ LOAD PROFILE ON START
   useEffect(() => {
     if (token && !user) {
       fetchUserProfile(token);
     }
   }, [token]);
 
-  // ---------------------------
-  // ✅ CONTEXT VALUE
-  // ---------------------------
   return (
     <DataContext.Provider
       value={{

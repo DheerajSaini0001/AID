@@ -18,11 +18,11 @@ import AddPixels from "./pages/AddPixels";
 function App() {
   return (
     <ThemeProvider>
-<DataProvider>
 
 
     
     <Router>
+<DataProvider>
           <div className="flex flex-col min-h-screen">
       <Navbar />
       
@@ -52,8 +52,8 @@ function App() {
     </div>
 
    
-    </Router>
     </DataProvider>
+    </Router>
     </ThemeProvider>
   );
 }

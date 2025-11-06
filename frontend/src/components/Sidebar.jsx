@@ -15,7 +15,7 @@ import { useData } from "../context/DataContext";
 
 const Sidebar = ({ isOpen = true, onToggle }) => {
   const { darkMode } = useTheme();
-  const {user}=useData();
+  const {user,logout}=useData();
   const navigate = useNavigate();
 
   const navItems = [
@@ -26,10 +26,7 @@ const Sidebar = ({ isOpen = true, onToggle }) => {
     { name: "Settings", icon: <Settings size={18} />, path: "/settings" },
   ];
 
-  const handleLogout = () => {
-    localStorage.removeItem("aid_token");
-    navigate("/", { replace: true });
-  };
+
 
   return (
     <aside
@@ -93,12 +90,9 @@ const Sidebar = ({ isOpen = true, onToggle }) => {
             {isOpen && <span>{item.name}</span>}
           </NavLink>
         ))}
-      </nav>
-
-      {/* ─── Bottom Section (Logout) ─────────────────────────────── */}
       <div className="px-3 py-4 border-t mt-auto">
         <button
-          onClick={handleLogout}
+          onClick={logout}
           className={`flex items-center w-full gap-3 p-3 rounded-lg text-sm font-medium transition ${
             darkMode
               ? "hover:bg-gray-800 hover:text-red-400"
@@ -109,6 +103,9 @@ const Sidebar = ({ isOpen = true, onToggle }) => {
           {isOpen && <span>Logout</span>}
         </button>
       </div>
+      </nav>
+
+      {/* ─── Bottom Section (Logout) ─────────────────────────────── */}
     </aside>
   );
 };

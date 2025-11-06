@@ -21,7 +21,7 @@ const Login = () => {
 
     if (success) {
       alert("✅ Logged in successfully!");
-      navigate("/dashboard/connect-account");
+      navigate("/dashboard/connect-account",{replace:true});
     }
   };
 
@@ -127,7 +127,7 @@ const Login = () => {
         >
           Don’t have an account?{" "}
           <span
-            onClick={() => navigate("/signup")}
+            onClick={() => navigate("/signup",{replace:true})}
             className="text-indigo-600 cursor-pointer hover:underline"
           >
             Sign up

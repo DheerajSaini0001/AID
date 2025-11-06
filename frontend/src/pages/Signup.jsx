@@ -56,7 +56,7 @@ const Signup = () => {
       }
 
       alert("Signup successful! Please login.");
-      navigate("/login");
+      navigate("/login",{replace:true});
     } catch (err) {
       console.error("Signup error:", err);
       setError(err.message || "Something went wrong");
@@ -235,7 +235,7 @@ const Signup = () => {
         >
           Already have an account?{" "}
           <span
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/login",{replace:true})}
             className="text-indigo-600 cursor-pointer hover:underline"
           >
             Login

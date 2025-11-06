@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Menu, Sun, Moon, Bell } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { useData } from "../context/DataContext";
+import { Link } from "react-router-dom";
 const Navbar = ({ onToggleSidebar }) => {
   const { darkMode, toggleTheme } = useTheme();
   const [notifCount] = useState(3); // example notification badge
@@ -24,9 +25,10 @@ const Navbar = ({ onToggleSidebar }) => {
           <Menu size={22} />
         </button>
 
-       <a href="/"> <h2 className="text-xl font-semibold tracking-tight">
+       <Link replace to="/"> <h2 className="text-xl font-semibold tracking-tight">
           AutoLead <span className="text-indigo-600">Intelligence</span>
-        </h2></a>
+        </h2></Link>
+        
       </div>
 
       {/* Right Section */}
