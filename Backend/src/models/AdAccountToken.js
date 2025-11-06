@@ -1,27 +1,21 @@
 import mongoose from "mongoose";
 
 const AdAccountTokenSchema = new mongoose.Schema({
-  dealerId: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: "Dealer", 
-    required: true 
-  },
+  dealerId: {type: mongoose.Schema.Types.ObjectId, ref: "Dealer", required: true },
 
-  // Now supports both Facebook + Instagram under Meta
-  platform: { 
-    type: String, 
-    enum: ["meta"], 
-    required: true 
-  },
+  platform: {type: String, enum: ["meta", "google", "tiktok", "linkedin"], required: true },
 
+  // Tokens
   accessToken: { type: String, required: true },
   refreshToken: { type: String },
   expiresIn: { type: Number },
 
-  // Extra fields for marketing data fetch
-  adAccountId: { type: String },        // Facebook Ad Account ID
-  pageId: { type: String },             // Facebook Page ID
-  instagramBusinessId: { type: String } // Linked Instagram Business Account ID
+  // Common Advertising Identifiers
+  adAccountId: { type: String }, // Facebook Ad Account OR Google Customer ID OR TikTok Advertiser ID OR LinkedIn Account ID
+
+  // META SPECIFIC (optional)
+  pageId: { type: String },              // Facebook Page ID
+  instagramBusinessId: { type: String }, // Instagram Business Account ID
 
 }, { timestamps: true });
 

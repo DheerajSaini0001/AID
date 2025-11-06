@@ -1,34 +1,21 @@
 import mongoose from "mongoose";
 
 const AdInsightsSchema = new mongoose.Schema({
-  dealerId: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: "Dealer", 
-    required: true 
-  },
+  dealerId: {type: mongoose.Schema.Types.ObjectId, ref: "Dealer", required: true },
 
-  // Now handles Facebook + Instagram under Meta
-  platform: { 
-    type: String, 
-    enum: ["meta"], 
-    required: true 
-  },
+  platform: {type: String, enum: ["meta", "google", "tiktok", "linkedin"], required: true},
 
-  date: { 
-    type: String, // YYYY-MM-DD
-    required: true 
-  },
+  date: {type: String, required: true },
 
-  // Performance Metrics
   spend: { type: Number, default: 0 },
   impressions: { type: Number, default: 0 },
   clicks: { type: Number, default: 0 },
-  leads: { type: Number, default: 0 },
+  leads: { type: Number, default: 0 }, 
 
-  // Optional breakdown fields (useful later)
+  // Optional detailed breakdown (useful for dashboard drill-down)
   campaignName: { type: String },
-  adSetName: { type: String },
-  adName: { type: String },
+  adSetName: { type: String }, // Google = AdGroup, TikTok = AdGroup
+  adName: { type: String },    // Creative name
 
 }, { timestamps: true });
 

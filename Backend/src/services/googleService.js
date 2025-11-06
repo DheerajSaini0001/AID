@@ -1,7 +1,7 @@
 import AdAccountToken from "../models/AdAccountToken.js";
 import AdInsights from "../models/AdInsights.js";
 
-export const fetchGoogleAds = async (dealerId) => {
+export const fetchGoogleInsights = async (dealerId) => {
   try {
     const tokenData = await AdAccountToken.findOne({ dealerId, platform: "google" });
     if (!tokenData) return console.log("⚠️ No Google Token Found");
@@ -41,7 +41,7 @@ export const fetchGoogleAds = async (dealerId) => {
 
     for (const row of reportData.results || []) {
       const date = row.segments.date;
-      const spend = (row.metrics.cost_micros || 0) / 1_000_000; // Convert micros → ₹
+      const spend = (row.metrics.cost_micros || 0) / 1_000_000;
       const clicks = row.metrics.clicks || 0;
       const impressions = row.metrics.impressions || 0;
 

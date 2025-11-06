@@ -21,7 +21,7 @@ const Login = () => {
 
     if (success) {
       alert("✅ Logged in successfully!");
-      navigate("/dashboard");
+      navigate("/dashboard/connect-account");
     }
   };
 
