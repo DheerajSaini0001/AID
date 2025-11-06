@@ -19,7 +19,7 @@ import GoogleConnect from "../components/GoogleConnect";
 
 const Dashboard = () => {
   const { darkMode } = useTheme();
-  const { logout, user } = useData();
+  const { logout, user,dashboardData } = useData();
 
   const handleLogout = () => {
     logout();
