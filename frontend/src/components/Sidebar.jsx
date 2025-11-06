@@ -15,7 +15,7 @@ import { useData } from "../context/DataContext";
 
 const Sidebar = ({ isOpen = true, onToggle }) => {
   const { darkMode } = useTheme();
-  const {user,logout}=useData();
+  const {user}=useData();
   const navigate = useNavigate();
 
   const navItems = [
@@ -90,19 +90,7 @@ const Sidebar = ({ isOpen = true, onToggle }) => {
             {isOpen && <span>{item.name}</span>}
           </NavLink>
         ))}
-      <div className="px-3 py-4 border-t mt-auto">
-        <button
-          onClick={logout}
-          className={`flex items-center w-full gap-3 p-3 rounded-lg text-sm font-medium transition ${
-            darkMode
-              ? "hover:bg-gray-800 hover:text-red-400"
-              : "hover:bg-gray-100 text-gray-700 hover:text-red-600"
-          }`}
-        >
-          <LogOut size={18} />
-          {isOpen && <span>Logout</span>}
-        </button>
-      </div>
+      
       </nav>
 
       {/* ─── Bottom Section (Logout) ─────────────────────────────── */}
