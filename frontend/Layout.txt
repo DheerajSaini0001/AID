@@ -1,0 +1,83 @@
+frontend/
+ └──|
+    ├── src/
+    │
+    │── App.jsx
+    │── index.jsx
+    │── index.css
+    │
+    │── layout/
+    │   ├── DashboardLayout.jsx        🧩 (Main layout - Sidebar + Navbar + Page)
+    │   └── AuthLayout.jsx             🧩 (For Login / Signup pages)
+    │   └── PublicLayout.jsx  
+    │── components/
+    │   ├── Sidebar.jsx                🧱 Left navigation menu
+    │   ├── Navbar.jsx                 🧱 Top navigation bar (theme + hamburger)
+    │   ├── KPIcard.jsx                📊 Small stats cards
+    │   ├── LineChartComp.jsx          📈 Leads/Spend over time
+    │   ├── BarChartComp.jsx           📊 Platform comparison chart
+    │   ├── LeadsTable.jsx             📋 Leads table with filters
+    │   ├── PDFExportButton.jsx        🧾 Export dashboard to PDF
+    │   ├── Loader.jsx                 ⏳ Loading spinner
+    │   └── ProtectedRoute.jsx         🔒 Protect dashboard routes
+    │
+    │── pages/
+    |   ├── Home.jsx                   🏠 (NEW — Landing Page)                 
+    │   ├── Login.jsx                  🔐 Dealer Login page
+    │   ├── Signup.jsx                 🧍 Dealer Signup page
+    │   ├── Dashboard.jsx              📊 Main dashboard
+    │   ├── Leads.jsx                  📋 Leads list and filters
+    │   ├── ROI.jsx                    💰 ROI insights and funnel
+    │   ├── Reports.jsx                🧾 Auto reports and PDF summary
+    │   └── Settings.jsx               ⚙️ Platform OAuth connection page
+    │
+    │── context/
+    │   ├── AuthContext.jsx            🔑 Handles login/logout + JWT storage
+    │   ├── DataContext.jsx            📊 Global data sharing (metrics)
+    │   └── ThemeContext.jsx           🌙 Handles dark/light mode
+    │
+    │── utils/
+    │   ├── api.jsx                    🌐 Axios API calls to backend
+    │   └── helpers.jsx                🧠 Common helper functions
+    │
+    │── router/
+    │   └── AppRouter.jsx              🧭 React Router setup (public + protected)
+    │
+    ├── package.json
+    ├── tailwind.config.js
+    ├── postcss.config.js
+    └── README.md
+
+
+
+
+
+
+┌──────────────────────────────┐
+│        Top Navbar            │  ← Dealer name, filters, logout
+├──────────────────────────────┤
+│ Sidebar |     Main Content   │
+│         |  → KPI Cards       │
+│         |  → Line Chart      │
+│         |  → Bar Chart       │
+│         |  → Leads Table     │
+│         |____________________│
+└──────────────────────────────┘
+
+
+
+
+Sidebar.jsx
+---------------------------------
+| 🚗 AID Dashboard             |
+|-------------------------------|
+| 📊 Dashboard                 |
+| 👥 Leads                     |
+| 📈 ROI Insights              |
+| 🧾 Reports                   |
+| ⚙️ Settings                  |
+|-------------------------------|
+| 🌙 Dark Mode Toggle          |
+| 🚪 Logout                    |
+---------------------------------
+

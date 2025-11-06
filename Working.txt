@@ -1,0 +1,13 @@
+Frontend (Dealer clicks "Connect Google Ads") 
+   ↓
+Backend → Redirects to Google OAuth URL
+   ↓
+Dealer logs in → grants permission
+   ↓
+Google redirects back to your backend with code
+   ↓
+Backend exchanges code for access_token + refresh_token
+   ↓
+Store in DB (for that dealer)
+   ↓
+Use tokens to call Google Ads API on schedule
