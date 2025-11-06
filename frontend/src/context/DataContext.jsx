@@ -73,7 +73,7 @@ const Navigate=useNavigate();
       }
 
       // Adjust based on backend response fields
-      setUser(data.dealerName?.toUpperCase() || data.name || "USER");
+      setUser(data.dealerName?.charAt(0).toUpperCase() + data.dealerName?.slice(1).toLowerCase()  || "USER");
 
       localStorage.setItem("dealerId", data._id);
       localStorage.setItem("user", JSON.stringify(data.dealerName));
