@@ -15,7 +15,7 @@ import { useData } from "../context/DataContext";
 
 const Sidebar = ({ isOpen = true, onToggle }) => {
   const { darkMode } = useTheme();
-  const {user}=useData();
+  const {dealerShip}=useData();
   const navigate = useNavigate();
 
   const navItems = [
@@ -54,7 +54,7 @@ const Sidebar = ({ isOpen = true, onToggle }) => {
           </div>
           {isOpen && (
             <>
-              <h3 className="font-semibold text-base">{user}</h3>
+              <h3 className="font-semibold text-base">{dealerShip}</h3>
               <p className="text-xs text-gray-500 dark:text-gray-400">Dealer</p>
             </>
           )}
@@ -90,7 +90,6 @@ const Sidebar = ({ isOpen = true, onToggle }) => {
             {isOpen && <span>{item.name}</span>}
           </NavLink>
         ))}
-      
       </nav>
 
       {/* ─── Bottom Section (Logout) ─────────────────────────────── */}
