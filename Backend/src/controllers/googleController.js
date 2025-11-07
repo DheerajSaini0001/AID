@@ -48,7 +48,7 @@ export const googleCallback = async (req, res) => {
 
     // ✅ Save Tokens
     await AdAccountToken.findOneAndUpdate(
-      { dealerId, platform: "google" },
+      { dealerId, platform: "Google" },
       { accessToken, refreshToken },
       { upsert: true }
     );

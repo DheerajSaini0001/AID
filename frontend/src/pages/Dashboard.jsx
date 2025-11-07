@@ -1,5 +1,4 @@
 import React from "react";
-import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import { useTheme } from "../context/ThemeContext";
 import { useData } from "../context/DataContext";
@@ -8,25 +7,17 @@ import {
   Users,
   DollarSign,
   Target,
-  Facebook,
-  Instagram,
-  Linkedin,
-  Music,
-  Globe,
   MousePointerClick,
   Eye,
   Percent,
-} from "lucide-react"; // ✅ Only using Lucide icons
-import MetaConnect from "../components/MetaConnect";
-import GoogleConnect from "../components/GoogleConnect";
+} from "lucide-react";
+import LineChart_LeadsSpend from "../components/LineChart_LeadsSpend"; // ✅ Import your chart component
+import BarChart_PlatformComparison from "../components/BarChart_PlatformComparison"; // ✅ Import your chart component
+import LeadsTable from "../components/LeadsTable";
 
 const Dashboard = () => {
   const { darkMode } = useTheme();
-  const { logout, user,dashboardData } = useData();
-
-  const handleLogout = () => {
-    logout();
-  };
+  const { logout, user, dashboardData } = useData();
 
   return (
     <div
@@ -44,15 +35,13 @@ const Dashboard = () => {
           {/* KPI Cards */}
           <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
             {[
-              { icon: <Users size={22} />, title: "Total Leads", value: dashboardData?.totalLeads.toFixed(2) ||0 },
-              
-              { icon: <DollarSign size={22} />, title: "Total Ad Spend", value: dashboardData?.totalSpend.toFixed(2)||0 },
-              { icon: <DollarSign size={22} />, title: "Cost Per Lead (CPL)", value: dashboardData?.cpl.toFixed(2)||0 },
-              { icon: <DollarSign size={22} />, title: "Total Clicks", value: dashboardData?.clicks.toFixed(2) ||0},
-              { icon: <DollarSign size={22} />, title: "Total Impression", value: dashboardData?.impressions.toFixed(2)||0 },
-              { icon: <DollarSign size={22} />, title: "Click-Through Rate (CTR)", value: dashboardData?.ctr.toFixed(2)||0 },
-              { icon: <DollarSign size={22} />, title: "Return on Investment (RIO)", value: dashboardData?.roi.toFixed(2) ||0},
-              
+              { icon: <Users size={22} />, title: "Total Leads", value: dashboardData?.totalLeads?.toFixed(0) || 0 },
+              { icon: <DollarSign size={22} />, title: "Total Ad Spend", value: `₹${dashboardData?.totalSpend?.toFixed(0) || 0}` },
+              { icon: <DollarSign size={22} />, title: "Cost Per Lead (CPL)", value: `₹${dashboardData?.cpl?.toFixed(2) || 0}` },
+              { icon: <MousePointerClick size={22} />, title: "Total Clicks", value: dashboardData?.clicks?.toFixed(0) || 0 },
+              { icon: <Eye size={22} />, title: "Total Impressions", value: dashboardData?.impressions?.toFixed(0) || 0 },
+              { icon: <Percent size={22} />, title: "Click-Through Rate (CTR)", value: `${(dashboardData?.ctr * 100 || 0).toFixed(1)}%` },
+              { icon: <Target size={22} />, title: "Return on Investment (ROI)", value: `${dashboardData?.roi?.toFixed(1) || 0}%` },
             ].map((item, i) => (
               <div
                 key={i}
@@ -81,30 +70,53 @@ const Dashboard = () => {
             ))}
           </section>
 
-        
           {/* Charts Section */}
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Line Chart Placeholder */}
+            {/* ✅ Line Chart (Now showing real trendData) */}
             <div
-              className={`h-80 rounded-2xl border flex items-center justify-center ${
+              className={`h-80 rounded-2xl border p-2 ${
                 darkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
               }`}
             >
-              <p className="text-gray-400">
-                📈 Line Chart (Performance Over Time)
-              </p>
+              {dashboardData?.trendData?.length ? (
+                <LineChart_LeadsSpend
+                  data={dashboardData.trendData}
+                  currencySymbol="₹"
+                  dateFormat={(date) =>
+                    new Date(date).toLocaleDateString("en-IN", {
+                      day: "2-digit",
+                      month: "short",
+                    })
+                  }
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center text-gray-400">
+                  📈 No data available for the selected period
+                </div>
+              )}
             </div>
 
-            {/* Bar Chart Placeholder */}
             <div
-              className={`h-80 rounded-2xl border flex items-center justify-center ${
-                darkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
-              }`}
-            >
-              <p className="text-gray-400">📊 Bar Chart (Leads by Source)</p>
-            </div>
+  className={`h-80 rounded-2xl border p-2 ${
+    darkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+  }`}
+>
+  {dashboardData?.platformBreakdown?.length ? (
+    <BarChart_PlatformComparison
+      data={dashboardData.platformBreakdown}
+      currencySymbol="₹"
+    />
+  ) : (
+    <div className="flex h-full items-center justify-center text-gray-400">
+      📊 No platform comparison data available
+    </div>
+  )}
+</div>
           </section>
 
+          <section className="mt-8">
+  <LeadsTable data={dashboardData?.leadsList || []} />
+</section>
           {/* Leads Table Section */}
           <section
             className={`rounded-2xl border overflow-hidden ${
@@ -112,7 +124,7 @@ const Dashboard = () => {
             }`}
           >
             <div className="p-4 border-b border-gray-700/50">
-              <h2 className="text-lg font-semibold">Recent Leads</h2>
+              <h2 className="text-lg font-semibold">Platform Breakdown</h2>
             </div>
             <table className="w-full text-sm">
               <thead
@@ -123,8 +135,8 @@ const Dashboard = () => {
                 }`}
               >
                 <tr>
-                  <th className="py-3 px-4 text-left">Plateform</th>
-                  <th className="py-3 px-4 text-left">Leads </th>
+                  <th className="py-3 px-4 text-left">Platform</th>
+                  <th className="py-3 px-4 text-left">Leads</th>
                   <th className="py-3 px-4 text-left">Spend</th>
                   <th className="py-3 px-4 text-left">CPL</th>
                   <th className="py-3 px-4 text-left">CTR</th>
@@ -139,10 +151,10 @@ const Dashboard = () => {
                     } border-b border-gray-700/30`}
                   >
                     <td className="py-3 px-4">{lead?.platform}</td>
-                    <td className="py-3 px-4">{lead?.leads.toFixed(2)}</td>
-                    <td className="py-3 px-4">${lead?.spend.toFixed(1)}</td>
-                    <td className="py-3 px-4">${lead?.cpl.toFixed(1)}</td>
-                    <td className="py-3 px-4">{lead?.ctr.toFixed(1)}%</td>
+                    <td className="py-3 px-4">{lead?.leads?.toFixed(0)}</td>
+                    <td className="py-3 px-4">₹{lead?.spend?.toFixed(0)}</td>
+                    <td className="py-3 px-4">₹{lead?.cpl?.toFixed(1)}</td>
+                    <td className="py-3 px-4">{(lead?.ctr * 100).toFixed(1)}%</td>
                   </tr>
                 ))}
               </tbody>

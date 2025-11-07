@@ -49,7 +49,7 @@ export const metaCallback = async (req, res) => {
 
     // ✅ Save Meta Data for Dealer
     await AdAccountToken.findOneAndUpdate(
-      { dealerId, platform: "meta" },
+      { dealerId, platform: "Facebook/Instagram" },
       { accessToken, expiresIn, adAccountId, pageId, instagramBusinessId },
       { upsert: true }
     );

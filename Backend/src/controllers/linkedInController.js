@@ -46,7 +46,7 @@ export const linkedInCallback = async (req, res) => {
 
     // ✅ Save to DB
     await AdAccountToken.findOneAndUpdate(
-      { dealerId, platform: "linkedin" },
+      { dealerId, platform: "LinkedIn" },
       { accessToken, adAccountId },
       { upsert: true }
     );

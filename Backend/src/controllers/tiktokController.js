@@ -47,7 +47,7 @@ export const tiktokCallback = async (req, res) => {
 
     // ✅ Save
     await AdAccountToken.findOneAndUpdate(
-      { dealerId, platform: "tiktok" },
+      { dealerId, platform: "TikTok" },
       { accessToken, adAccountId: advertiserId },
       { upsert: true }
     );

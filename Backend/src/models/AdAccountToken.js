@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const AdAccountTokenSchema = new mongoose.Schema({
   dealerId: {type: mongoose.Schema.Types.ObjectId, ref: "Dealer", required: true },
 
-  platform: {type: String, enum: ["meta", "google", "tiktok", "linkedin"], required: true },
+  platform: {type: String, enum: ["Facebook/Instagram", "Google", "LinkedIn", "TikTok"], required: true },
 
   // Tokens
   accessToken: { type: String, required: true },
