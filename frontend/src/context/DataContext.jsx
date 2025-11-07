@@ -44,7 +44,6 @@ export const DataProvider = ({ children }) => {
       });
 
       const data = await response.json();
-
       if (!response.ok) throw new Error(data.message || "Login failed");
 
       if (data.token) {
@@ -106,6 +105,7 @@ export const DataProvider = ({ children }) => {
   // ✅ FETCH DASHBOARD SUMMARY (supports filters)
   const fetchDashboardSummary = async (authToken = token, filter = "last7days") => {
     if (!authToken) return;
+
     try {
       setLoading(true);
       const dealerId = localStorage.getItem("dealerId");
@@ -146,7 +146,7 @@ export const DataProvider = ({ children }) => {
     navigate("/login", { replace: true });
   };
 
-  // ✅ Auto-fetch profile + dashboard on load
+  // ✅ Auto-fetch profile + dashboard on app start
   useEffect(() => {
     if (token) {
       fetchUserProfile(token);
@@ -154,7 +154,7 @@ export const DataProvider = ({ children }) => {
     }
   }, [token]);
 
-  // ✅ Global auto-logout on token expiry (works on every route)
+  // ✅ Global auto-logout when token expires (check every 24 hours)
   useEffect(() => {
     if (!token) return;
     const interval = setInterval(() => {
@@ -162,8 +162,20 @@ export const DataProvider = ({ children }) => {
         console.error("⏰ Token expired. Auto logging out...");
         logout("expired");
       }
-     }, 24 * 60 * 60 * 1000); // ✅ Check every 1 day (24h)
+    }, 24 * 60 * 60 * 1000); // ✅ Check every 1 day
     return () => clearInterval(interval);
+  }, [token]);
+
+  // ✅ Auto-refresh dashboard every 15 minutes
+  useEffect(() => {
+    if (!token) return;
+
+    const refreshInterval = setInterval(() => {
+      console.log("🔄 Auto-refreshing dashboard data (every 15 minutes)...");
+      fetchDashboardSummary(token);
+    }, 15 * 60 * 1000); // ✅ 15 minutes
+
+    return () => clearInterval(refreshInterval);
   }, [token]);
 
   return (
