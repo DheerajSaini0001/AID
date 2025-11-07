@@ -42,19 +42,23 @@ export const getDashboardSummary = async (req, res) => {
     const roi = totalSpend > 0 ? (revenue / totalSpend) * 100 : 0;
 
     // Platform Breakdown
-    const platforms = ["Facebook/Instagram", "Google Ads", "Linkedin", "Tiktok"];
+    const platforms = ["Facebook/Instagram", "Google", "LinkedIn", "TikTok"];
     const platformBreakdown = platforms.map((platform) => {
       const platformData = records.filter((r) => r.platform === platform);
 
       const pLeads = platformData.reduce((sum, r) => sum + (r.leads || 0), 0);
       const pSpend = platformData.reduce((sum, r) => sum + (r.spend || 0), 0);
+      const pImpressions = platformData.reduce((sum, r) => sum + (r.impressions || 0), 0);
+      const pClicks = platformData.reduce((sum, r) => sum + (r.clicks || 0), 0);
       const pCpl = pLeads > 0 ? pSpend / pLeads : 0;
+      const pCtr = pImpressions > 0 ? pClicks / pImpressions : 0;
 
       return {
         platform,
         leads: pLeads,
         spend: pSpend,
-        cpl: pCpl
+        cpl: pCpl,
+        ctr: pCtr
       };
     });
 

@@ -13,6 +13,9 @@ import {
   Linkedin,
   Music,
   Globe,
+  MousePointerClick,
+  Eye,
+  Percent,
 } from "lucide-react"; // ✅ Only using Lucide icons
 import MetaConnect from "../components/MetaConnect";
 import GoogleConnect from "../components/GoogleConnect";
@@ -39,12 +42,17 @@ const Dashboard = () => {
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto p-6 md:p-10 space-y-8">
           {/* KPI Cards */}
-          <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+          <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
             {[
-              { icon: <Users size={22} />, title: "Total Leads", value: "1,245" },
+              { icon: <Users size={22} />, title: "Total Leads", value: dashboardData?.totalLeads.toFixed(2) ||0 },
               
-              { icon: <DollarSign size={22} />, title: "Spend", value: "$84,230" },
-              { icon: <Target size={22} />, title: "CPL", value:"$"+(84230 / 1245).toFixed(2)  },
+              { icon: <DollarSign size={22} />, title: "Total Ad Spend", value: dashboardData?.totalSpend.toFixed(2)||0 },
+              { icon: <DollarSign size={22} />, title: "Cost Per Lead (CPL)", value: dashboardData?.cpl.toFixed(2)||0 },
+              { icon: <DollarSign size={22} />, title: "Total Clicks", value: dashboardData?.clicks.toFixed(2) ||0},
+              { icon: <DollarSign size={22} />, title: "Total Impression", value: dashboardData?.impressions.toFixed(2)||0 },
+              { icon: <DollarSign size={22} />, title: "Click-Through Rate (CTR)", value: dashboardData?.ctr.toFixed(2)||0 },
+              { icon: <DollarSign size={22} />, title: "Return on Investment (RIO)", value: dashboardData?.roi.toFixed(2) ||0},
+              
             ].map((item, i) => (
               <div
                 key={i}
@@ -115,43 +123,26 @@ const Dashboard = () => {
                 }`}
               >
                 <tr>
-                  <th className="py-3 px-4 text-left">Lead Name</th>
-                  <th className="py-3 px-4 text-left">Status</th>
-                  <th className="py-3 px-4 text-left">Source</th>
-                  <th className="py-3 px-4 text-left">Date</th>
+                  <th className="py-3 px-4 text-left">Plateform</th>
+                  <th className="py-3 px-4 text-left">Leads </th>
+                  <th className="py-3 px-4 text-left">Spend</th>
+                  <th className="py-3 px-4 text-left">CPL</th>
+                  <th className="py-3 px-4 text-left">CTR</th>
                 </tr>
               </thead>
               <tbody>
-                {[
-                  {
-                    name: "John Carter",
-                    status: "Closed",
-                    source: "Google Ads",
-                    date: "2025-11-02",
-                  },
-                  {
-                    name: "Ava Patel",
-                    status: "Pending",
-                    source: "Facebook",
-                    date: "2025-11-03",
-                  },
-                  {
-                    name: "Rohan Mehta",
-                    status: "New",
-                    source: "Website",
-                    date: "2025-11-04",
-                  },
-                ].map((lead, i) => (
+                {dashboardData?.platformBreakdown?.map((lead, i) => (
                   <tr
                     key={i}
                     className={`${
                       darkMode ? "hover:bg-gray-700/40" : "hover:bg-gray-50"
                     } border-b border-gray-700/30`}
                   >
-                    <td className="py-3 px-4">{lead.name}</td>
-                    <td className="py-3 px-4">{lead.status}</td>
-                    <td className="py-3 px-4">{lead.source}</td>
-                    <td className="py-3 px-4">{lead.date}</td>
+                    <td className="py-3 px-4">{lead?.platform}</td>
+                    <td className="py-3 px-4">{lead?.leads.toFixed(2)}</td>
+                    <td className="py-3 px-4">${lead?.spend.toFixed(1)}</td>
+                    <td className="py-3 px-4">${lead?.cpl.toFixed(1)}</td>
+                    <td className="py-3 px-4">{lead?.ctr.toFixed(1)}%</td>
                   </tr>
                 ))}
               </tbody>
