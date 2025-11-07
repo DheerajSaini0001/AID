@@ -81,7 +81,7 @@ const Footer = () => {
 
       {/* Bottom Bar */}
       <div
-        className={`text-center py-4 text-sm border-t ${
+        className={`text-center py-4 text-sm flex justify-center items-center border-t ${
           darkMode
             ? "border-gray-800 text-gray-500"
             : "border-gray-200 text-gray-500"
@@ -89,12 +89,12 @@ const Footer = () => {
       >
         © {new Date().getFullYear()} AutoLead Intelligence — Made with{" "}
         <Heart
-          size={14}
+          size={15}
           className="inline text-red-500 mx-1 animate-pulse"
           strokeWidth={2}
           fill="currentColor"
-        />{" "}
-        by Dheeraj
+        />
+        
       </div>
     </footer>
   );

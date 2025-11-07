@@ -14,6 +14,7 @@ import { DataProvider } from "./context/DataContext";
 import ConnectAccounts from "./pages/ConnectAccounts";
 import SyncLeads from "./pages/SyncLeads";
 import AddPixels from "./pages/AddPixels";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
         <Route path="/dashboard/sync-leads" element={<SyncLeads />} />
         <Route path="/dashboard/add-pixels" element={<AddPixels />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="*" element={<NotFound />} />
         {/* Protected / Dashboard Routes */}
         {/* <Route path="/dashboard" element={<Dashboard />} /> */}
         {/* <Route path="/leads" element={<Leads />} />
