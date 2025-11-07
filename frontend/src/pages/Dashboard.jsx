@@ -18,8 +18,8 @@ import LeadsTable from "../components/LeadsTable";
 
 const Dashboard = () => {
   const { darkMode } = useTheme();
-  const { dashboardData, setDashboardData } = useData(); // ✅ Ensure setDashboardData exists in your DataContext
-  const [filter, setFilter] = useState("today");
+  const { dashboardData, fetchDashboardSummary} = useData(); // ✅ Ensure setDashboardData exists in your DataContext
+  const [filter, setFilter] = useState("last7days");
   const [loading, setLoading] = useState(false);
 
   // ✅ Filter options
@@ -35,32 +35,18 @@ const Dashboard = () => {
 
   // ✅ Fetch data from backend whenever filter changes
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      setLoading(true);
-      try {
-        const token = localStorage.getItem("token");
-        const dealerId = localStorage.getItem("dealerId");
-
-        const response = await fetch(
-          `http://localhost:501/dashboard/summary?dealerId=${dealerId}&filter=${filter}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const data = await response.json();
-        setDashboardData(data);
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDashboardData();
-  }, [filter, setDashboardData]);
+  const loadDashboard = async () => {
+    setLoading(true);
+    try {
+      await fetchDashboardSummary(localStorage.getItem("token"), filter);
+    } catch (err) {
+      console.error("Error loading dashboard:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  loadDashboard();
+}, [filter]);
 
   return (
     <div

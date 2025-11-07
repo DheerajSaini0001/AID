@@ -2,22 +2,17 @@ import PerformanceData from "../models/AdInsights.js";
 
 export const getDashboardSummary = async (req, res) => {
   try {
-    const dealerId = req.dealerId;
-    const  filter  = req.query.filter; // today, yesterday, last3days, etc.
-    
+    const dealerId = req.dealerId; 
+    const filter = req.query.filter; 
 
-    const matchQuery = { dealerId };
     const now = new Date();
     let startDate, endDate;
-
-    // -----------------------------
-    // 🔹 Date Filter Logic
-    // -----------------------------
-    endDate = new Date(); // default to now
+    endDate = new Date();
 
     switch (filter) {
       case "today":
-        startDate = new Date(now.setHours(0, 0, 0, 0));
+        startDate = new Date();
+        startDate.setHours(0, 0, 0, 0);
         break;
 
       case "yesterday":
@@ -54,17 +49,18 @@ export const getDashboardSummary = async (req, res) => {
         break;
 
       default:
-        // If no filter provided, show last 7 days by default
         startDate = new Date();
         startDate.setDate(startDate.getDate() - 7);
     }
 
-    matchQuery.date = { $gte: startDate, $lte: endDate };
+    // 🔹 Fetch all records (then filter manually for string dates)
+    const allRecords = await PerformanceData.find({ dealerId }).sort({ date: 1 });
 
-    // -----------------------------
-    // 🔹 Fetch Records
-    // -----------------------------
-    const records = await PerformanceData.find(matchQuery).sort({ date: 1 });
+    // ✅ Handle both string and Date types
+    const records = allRecords.filter((r) => {
+      const recordDate = new Date(r.date);
+      return recordDate >= startDate && recordDate <= endDate;
+    });
 
     if (!records.length) {
       return res.json({
@@ -81,7 +77,9 @@ export const getDashboardSummary = async (req, res) => {
       });
     }
 
-    // 🔹 Aggregate Metrics
+    // -----------------------------
+    // 🔹 Aggregate Totals
+    // -----------------------------
     const totalLeads = records.reduce((sum, r) => sum + (r.leads || 0), 0);
     const totalSpend = records.reduce((sum, r) => sum + (r.spend || 0), 0);
     const clicks = records.reduce((sum, r) => sum + (r.clicks || 0), 0);
@@ -92,7 +90,9 @@ export const getDashboardSummary = async (req, res) => {
     const ctr = impressions > 0 ? clicks / impressions : 0;
     const roi = totalSpend > 0 ? (revenue / totalSpend) * 100 : 0;
 
+    // -----------------------------
     // 🔹 Platform Breakdown
+    // -----------------------------
     const platforms = ["Facebook/Instagram", "Google", "LinkedIn", "TikTok"];
     const platformBreakdown = platforms.map((platform) => {
       const platformData = records.filter((r) => r.platform === platform);
@@ -110,7 +110,9 @@ export const getDashboardSummary = async (req, res) => {
       };
     });
 
-    // 🔹 Trend Data (Chart)
+    // -----------------------------
+    // 🔹 Trend Data (Line Chart)
+    // -----------------------------
     const trendMap = {};
     records.forEach((r) => {
       const dateKey = new Date(r.date).toISOString().split("T")[0];
@@ -123,7 +125,9 @@ export const getDashboardSummary = async (req, res) => {
       .sort(([a], [b]) => new Date(a) - new Date(b))
       .map(([date, { leads, spend }]) => ({ date, leads, spend }));
 
-    // 🔹 Leads List
+    // -----------------------------
+    // 🔹 Leads Table
+    // -----------------------------
     const leadsList = records.map((r) => ({
       date: r.date,
       adName: r.adName || "—",
@@ -134,6 +138,9 @@ export const getDashboardSummary = async (req, res) => {
       status: r.status || "New",
     }));
 
+    // -----------------------------
+    // 🔹 Final Response
+    // -----------------------------
     res.json({
       totalLeads,
       totalSpend,
@@ -146,8 +153,9 @@ export const getDashboardSummary = async (req, res) => {
       trendData,
       leadsList,
     });
+
   } catch (error) {
-    console.error("Dashboard API Error:", error.message);
+    console.error("❌ Dashboard API Error:", error.message);
     res.status(500).json({ message: "Server Error: Dashboard Summary" });
   }
 };

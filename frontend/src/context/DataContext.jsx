@@ -100,32 +100,39 @@ export const DataProvider = ({ children }) => {
   };
 
   // ✅ FETCH DASHBOARD SUMMARY
-  const fetchDashboardSummary = async (authToken = token) => {
-    if (!authToken) return;
+// ✅ FETCH DASHBOARD SUMMARY (with filter support)
+const fetchDashboardSummary = async (authToken = token, filter = "last7days") => {
+  if (!authToken) return;
 
-    try {
-      setLoading(true);
-      const response = await fetch(`${API_Dealer_Url}/dashboard/summary`, {
+  try {
+    setLoading(true);
+
+    const dealerId = localStorage.getItem("dealerId");
+    const response = await fetch(
+      `${API_Dealer_Url}/dashboard/summary?dealerId=${dealerId}&filter=${filter}`,
+      {
         method: "GET",
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to fetch dashboard summary");
       }
+    );
 
-      setDashboardData(data);
-    } catch (err) {
-      console.error("Dashboard fetch error:", err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch dashboard summary");
     }
-  };
+
+    setDashboardData(data);
+  } catch (err) {
+    console.error("Dashboard fetch error:", err);
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // ✅ LOGOUT
   const logout = () => {
