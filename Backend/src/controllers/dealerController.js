@@ -31,7 +31,7 @@ export const loginDealer = async (req, res) => {
     const match = await bcrypt.compare(password, dealer.password);
     if (!match) return res.status(400).json({ message: "Invalid password" });
 
-    const token = jwt.sign({ dealerId: dealer._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+    const token = jwt.sign({ dealerId: dealer._id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 
     res.json({ message: "Login Successful", token });
   } catch (err) {
