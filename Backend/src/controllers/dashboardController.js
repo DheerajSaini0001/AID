@@ -3,7 +3,8 @@ import PerformanceData from "../models/AdInsights.js";
 export const getDashboardSummary = async (req, res) => {
   try {
     const dealerId = req.dealerId;
-    const { filterType } = req.query; // today, yesterday, last3days, etc.
+    const  filter  = req.query.filter; // today, yesterday, last3days, etc.
+    
 
     const matchQuery = { dealerId };
     const now = new Date();
@@ -14,7 +15,7 @@ export const getDashboardSummary = async (req, res) => {
     // -----------------------------
     endDate = new Date(); // default to now
 
-    switch (filterType) {
+    switch (filter) {
       case "today":
         startDate = new Date(now.setHours(0, 0, 0, 0));
         break;
