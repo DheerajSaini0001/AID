@@ -8,13 +8,14 @@ export const DataProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [dealerShip, setDealerShip] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token") || null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // for API calls
+  const [isAuthLoading, setIsAuthLoading] = useState(true); // ✅ new: for initial auth check
   const [error, setError] = useState(null);
   const [dashboardData, setDashboardData] = useState(null);
 
   const navigate = useNavigate();
   const Dealer_Url = "http://localhost:501/dealer";
-  const API_Dealer_Url = "http://localhost:501"; // ✅ adjust if different
+  const API_Dealer_Url = "http://localhost:501";
 
   // ✅ LOGIN FUNCTION
   const login = async (email, password) => {
@@ -24,24 +25,18 @@ export const DataProvider = ({ children }) => {
     try {
       const response = await fetch(`${Dealer_Url}/login`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Login failed");
-      }
+      if (!response.ok) throw new Error(data.message || "Login failed");
 
       if (data.token) {
         localStorage.setItem("token", data.token);
         setToken(data.token);
-
         await fetchUserProfile(data.token);
-        await fetchDashboardSummary(data.token); // ✅ Fetch dashboard right after login
+        await fetchDashboardSummary(data.token);
       } else {
         throw new Error("Invalid login response from server");
       }
@@ -62,7 +57,6 @@ export const DataProvider = ({ children }) => {
 
     try {
       setLoading(true);
-
       const response = await fetch(`${Dealer_Url}/profile`, {
         method: "GET",
         headers: {
@@ -72,12 +66,9 @@ export const DataProvider = ({ children }) => {
       });
 
       const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Failed to fetch profile");
 
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to fetch profile");
-      }
-
-      // Format names properly
+      // Format names
       setUser(
         data.dealerName
           ? data.dealerName.charAt(0).toUpperCase() + data.dealerName.slice(1).toLowerCase()
@@ -85,7 +76,8 @@ export const DataProvider = ({ children }) => {
       );
       setDealerShip(
         data.dealershipName
-          ? data.dealershipName.charAt(0).toUpperCase() + data.dealershipName.slice(1).toLowerCase()
+          ? data.dealershipName.charAt(0).toUpperCase() +
+              data.dealershipName.slice(1).toLowerCase()
           : "USER"
       );
 
@@ -100,39 +92,31 @@ export const DataProvider = ({ children }) => {
   };
 
   // ✅ FETCH DASHBOARD SUMMARY
-// ✅ FETCH DASHBOARD SUMMARY (with filter support)
-const fetchDashboardSummary = async (authToken = token, filter = "last7days") => {
-  if (!authToken) return;
+  const fetchDashboardSummary = async (authToken = token, filter = "last7days") => {
+    if (!authToken) return;
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
+      const dealerId = localStorage.getItem("dealerId");
+      const response = await fetch(
+        `${API_Dealer_Url}/dashboard/summary?dealerId=${dealerId}&filter=${filter}`,
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
 
-    const dealerId = localStorage.getItem("dealerId");
-    const response = await fetch(
-      `${API_Dealer_Url}/dashboard/summary?dealerId=${dealerId}&filter=${filter}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      }
-    );
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Failed to fetch dashboard summary");
 
-    const data = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(data.message || "Failed to fetch dashboard summary");
+      setDashboardData(data);
+    } catch (err) {
+      console.error("Dashboard fetch error:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-
-    setDashboardData(data);
-  } catch (err) {
-    console.error("Dashboard fetch error:", err);
-    setError(err.message);
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   // ✅ LOGOUT
   const logout = () => {
@@ -142,15 +126,24 @@ const fetchDashboardSummary = async (authToken = token, filter = "last7days") =>
     setToken(null);
     setUser(null);
     setDashboardData(null);
-    navigate("/", { replace: true });
+    navigate("/",{ replace: true });
   };
 
-  // ✅ LOAD PROFILE & DASHBOARD ON START
+  // ✅ INITIAL AUTH CHECK
   useEffect(() => {
-    if (token) {
-      fetchUserProfile(token);
-      fetchDashboardSummary(token);
-    }
+    const initializeAuth = async () => {
+      if (token) {
+        try {
+          await fetchUserProfile(token);
+          await fetchDashboardSummary(token);
+        } catch (error) {
+          console.error("Auth init error:", error);
+        }
+      }
+      setIsAuthLoading(false); // ✅ mark auth as checked (whether token exists or not)
+    };
+
+    initializeAuth();
   }, [token]);
 
   return (
@@ -160,12 +153,13 @@ const fetchDashboardSummary = async (authToken = token, filter = "last7days") =>
         dealerShip,
         token,
         loading,
+        isAuthLoading, // ✅ exposed to components
         error,
         login,
         logout,
         fetchUserProfile,
         fetchDashboardSummary,
-        dashboardData, // ✅ new state exposed
+        dashboardData,
       }}
     >
       {children}

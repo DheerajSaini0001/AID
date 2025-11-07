@@ -25,8 +25,8 @@ const Navbar = ({ onToggleSidebar }) => {
 
   // ✅ Handle logout
   const handleLogout = () => {
-    localStorage.removeItem("token"); // or aid_token, depending on your app
-    navigate("/login");
+    logout(); // or aid_token, depending on your app
+    navigate("/",{replace:true});
   };
 
   return (
@@ -97,7 +97,7 @@ const Navbar = ({ onToggleSidebar }) => {
             >
              
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="flex items-center w-full px-4 py-2 text-sm hover:bg-indigo-50 dark:hover:bg-gray-700"
               >
                 <LogOut size={16} className="mr-2" />

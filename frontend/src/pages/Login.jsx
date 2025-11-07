@@ -8,7 +8,6 @@ const Login = () => {
   const { darkMode, toggleTheme } = useTheme(); // ✅ added toggleTheme to use
   const navigate = useNavigate();
   const { login, loading, error } = useData();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);

@@ -15,6 +15,7 @@ import ConnectAccounts from "./pages/ConnectAccounts";
 import SyncLeads from "./pages/SyncLeads";
 import AddPixels from "./pages/AddPixels";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -34,10 +35,10 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        <Route path="/dashboard/connect-account" element={<ConnectAccounts />} />
-        <Route path="/dashboard/sync-leads" element={<SyncLeads />} />
-        <Route path="/dashboard/add-pixels" element={<AddPixels />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard/connect-account" element={<ProtectedRoute><ConnectAccounts /></ProtectedRoute> } />
+        <Route path="/dashboard/sync-leads" element={<ProtectedRoute> <SyncLeads /></ProtectedRoute>} />
+        <Route path="/dashboard/add-pixels" element={<ProtectedRoute><AddPixels /></ProtectedRoute> } />
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute> } />
         <Route path="*" element={<NotFound />} />
         {/* Protected / Dashboard Routes */}
         {/* <Route path="/dashboard" element={<Dashboard />} /> */}
