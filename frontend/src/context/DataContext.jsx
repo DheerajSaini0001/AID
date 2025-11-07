@@ -4,6 +4,20 @@ import { useNavigate } from "react-router-dom";
 const DataContext = createContext();
 export const useData = () => useContext(DataContext);
 
+// ✅ Helper function to check if JWT is expired
+const isTokenExpired = (token) => {
+  if (!token) return true;
+  try {
+    const [, payload] = token.split(".");
+    const decoded = JSON.parse(atob(payload)); // decode JWT payload
+    const currentTime = Date.now() / 1000; // in seconds
+    return decoded.exp < currentTime; // true if expired
+  } catch (err) {
+    console.error("Error decoding token:", err);
+    return true;
+  }
+};
+
 export const DataProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [dealerShip, setDealerShip] = useState(null);
@@ -12,6 +26,7 @@ export const DataProvider = ({ children }) => {
   const [isAuthLoading, setIsAuthLoading] = useState(true); // ✅ new: for initial auth check
   const [error, setError] = useState(null);
   const [dashboardData, setDashboardData] = useState(null);
+  const [sessionExpired, setSessionExpired] = useState(false);
 
   const navigate = useNavigate();
   const Dealer_Url = "http://localhost:501/dealer";
@@ -54,7 +69,6 @@ export const DataProvider = ({ children }) => {
   // ✅ FETCH PROFILE
   const fetchUserProfile = async (authToken = token) => {
     if (!authToken) return;
-
     try {
       setLoading(true);
       const response = await fetch(`${Dealer_Url}/profile`, {
@@ -68,7 +82,7 @@ export const DataProvider = ({ children }) => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Failed to fetch profile");
 
-      // Format names
+
       setUser(
         data.dealerName
           ? data.dealerName.charAt(0).toUpperCase() + data.dealerName.slice(1).toLowerCase()
@@ -91,13 +105,14 @@ export const DataProvider = ({ children }) => {
     }
   };
 
-  // ✅ FETCH DASHBOARD SUMMARY
+
   const fetchDashboardSummary = async (authToken = token, filter = "last7days") => {
     if (!authToken) return;
 
     try {
       setLoading(true);
       const dealerId = localStorage.getItem("dealerId");
+
       const response = await fetch(
         `${API_Dealer_Url}/dashboard/summary?dealerId=${dealerId}&filter=${filter}`,
         {
@@ -109,27 +124,32 @@ export const DataProvider = ({ children }) => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Failed to fetch dashboard summary");
 
+
       setDashboardData(data);
     } catch (err) {
       console.error("Dashboard fetch error:", err);
       setError(err.message);
     } finally {
       setLoading(false);
+
     }
   };
 
   // ✅ LOGOUT
   const logout = () => {
+
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("dealerId");
     setToken(null);
     setUser(null);
     setDashboardData(null);
+
     navigate("/",{ replace: true });
   };
 
   // ✅ INITIAL AUTH CHECK
+
   useEffect(() => {
     const initializeAuth = async () => {
       if (token) {
@@ -146,6 +166,30 @@ export const DataProvider = ({ children }) => {
     initializeAuth();
   }, [token]);
 
+  // ✅ Global auto-logout when token expires (check every 24 hours)
+  useEffect(() => {
+    if (!token) return;
+    const interval = setInterval(() => {
+      if (isTokenExpired(token)) {
+        console.error("⏰ Token expired. Auto logging out...");
+        logout("expired");
+      }
+    }, 24 * 60 * 60 * 1000); // ✅ Check every 1 day
+    return () => clearInterval(interval);
+  }, [token]);
+
+  // ✅ Auto-refresh dashboard every 15 minutes
+  useEffect(() => {
+    if (!token) return;
+
+    const refreshInterval = setInterval(() => {
+      console.log("🔄 Auto-refreshing dashboard data (every 15 minutes)...");
+      fetchDashboardSummary(token);
+    }, 15 * 60 * 1000); // ✅ 15 minutes
+
+    return () => clearInterval(refreshInterval);
+  }, [token]);
+
   return (
     <DataContext.Provider
       value={{
@@ -160,6 +204,8 @@ export const DataProvider = ({ children }) => {
         fetchUserProfile,
         fetchDashboardSummary,
         dashboardData,
+        setDashboardData,
+
       }}
     >
       {children}
